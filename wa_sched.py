@@ -68,14 +68,21 @@ def send_message(contact_name, message):
     except Exception as e:
         print(f"An error occurred: {e}")
 
-# Schedule message sending every minute
-def schedule_messages():
-    contact_name = "Notes Private"  # Replace with your contact's name
-    message = "Hello! This is an automated message sent via WhatsApp Desktop."
-    
-    while True:
+def send_weekly_message():
+    current_time = datetime.now()
+    day_of_week = current_time.weekday()  # 0 = Monday, 6 = Sunday
+
+    if day_of_week == 4 and current_time.hour == 23 and current_time.minute == 57:
+        contact_name = "Notes Private"  # Replace with your contact's name
+        message = "Hello! This is an automated message sent via WhatsApp Desktop."
         send_message(contact_name, message)
-        time.sleep(10)  # Wait for 1 minute before sending the next message
+        print("Message sent!")
+
+def schedule_messages():
+    """Schedule the message sending function to run every minute to check the time."""
+    while True:
+        send_weekly_message()
+        time.sleep(60)  # Wait for 1 minute before checking again
 
 # Start sending messages
 if __name__ == "__main__":
