@@ -1,46 +1,72 @@
 import pyautogui
 import time
-from datetime import datetime  # Import the datetime module
+from datetime import datetime
+
+
+DELAY_TIME = 0.2
+DELAY_MESSAGE_TIME = 2
+
+def open_whatsapp():
+    """Open WhatsApp Desktop from the taskbar."""
+    try:
+        pyautogui.hotkey('win', 'd')  # Minimize all windows (Windows only)
+        time.sleep(DELAY_TIME)
+        pyautogui.hotkey('win', '1')  # Adjust this to open WhatsApp Desktop (based on taskbar position)
+        time.sleep(DELAY_TIME)  # Wait for WhatsApp Desktop to open
+    except Exception as e:
+        print(f"Error opening WhatsApp: {e}")
+
+def search_contact(contact_name):
+    """Search for a contact on WhatsApp."""
+    try:
+        pyautogui.hotkey('ctrl', 'f')  # Shortcut to open the search bar
+        time.sleep(DELAY_TIME)
+        pyautogui.hotkey('ctrl', 'a')  # Select any pre-existing text in the search field
+        time.sleep(DELAY_TIME)
+        pyautogui.press('delete')  # Delete the selected text
+        time.sleep(DELAY_TIME)
+        pyautogui.write(contact_name)  # Type the contact name
+        time.sleep(DELAY_TIME)
+        pyautogui.press('tab')  # Navigate to the contact
+        time.sleep(DELAY_TIME)
+        pyautogui.press('enter')  # Open the contact's chat
+        time.sleep(DELAY_TIME)
+    except Exception as e:
+        print(f"Error searching contact: {e}")
+
+def send_text_message(message):
+    """Send the message in the chat."""
+    try:
+        current_time = datetime.now().strftime("%d %b %Y %H:%M:%S")
+        pyautogui.write(message + " " + current_time)  # Type the message with timestamp
+        time.sleep(DELAY_MESSAGE_TIME)
+        pyautogui.press('enter')  # Send the message
+        time.sleep(DELAY_TIME)
+    except Exception as e:
+        print(f"Error sending message: {e}")
+
+def close_whatsapp():
+    """Close the WhatsApp chat and return to the main window."""
+    try:
+        pyautogui.press('esc')  # Close the chat
+        pyautogui.press('esc')
+        pyautogui.press('esc')  # Close any remaining overlays
+    except Exception as e:
+        print(f"Error closing WhatsApp: {e}")
 
 def send_message(contact_name, message):
+    """Main function to send a message to a contact."""
     try:
-        # Open WhatsApp Desktop (ensure it's in the taskbar)
-        pyautogui.hotkey('win', 'd')  # Minimize all windows (Windows only)
-        time.sleep(0.2)
-        pyautogui.hotkey('win', '1')  # Adjust this to open WhatsApp Desktop (based on taskbar position)
-        time.sleep(0.2)  # Wait for WhatsApp Desktop to open
+        open_whatsapp() 
+        search_contact(contact_name)
+        send_text_message(message) 
+        close_whatsapp()
 
-        # Search for the contact
-        pyautogui.hotkey('ctrl', 'f')  # Shortcut to open the search bar
-        time.sleep(0.2)
-        pyautogui.hotkey('ctrl', 'a') 
-        time.sleep(0.2)
-        pyautogui.press('delete')
-        time.sleep(0.2)
-        pyautogui.write(contact_name)  # Type the contact name
-        time.sleep(0.2)
-        pyautogui.press('tab')
-        time.sleep(0.2)
-        pyautogui.press('enter')
-        time.sleep(0.2)
-
-        
+        # Log the sent message with the timestamp
         current_time = datetime.now().strftime("%d %b %Y %H:%M:%S")
-        # Send the message
-        pyautogui.write(message + " " + current_time)  # Type the message
-        time.sleep(1.9)
-        pyautogui.press('enter')  # Send the message
-        time.sleep(0.2)
-        pyautogui.press('esc')
-        pyautogui.press('esc')
-        pyautogui.press('esc')
-
-
         print(f"{current_time} | {contact_name} | {message}")
     except Exception as e:
         print(f"An error occurred: {e}")
-
-
 
 # Schedule message sending every minute
 def schedule_messages():
